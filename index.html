@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div id="login-screen">
+        <h1>Login</h1>
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div id="conversation-list-screen" style="display: none;">
+        <header>
+            <h2>Conversas</h2>
+            <button id="logout-button">Sair</button>
+        </header>
+        <div id="conversation-list"></div>
+        <form id="new-conversation-form">
+            <input type="text" id="new-contact" placeholder="Insira o e-mail de contato..." required>
+            <button type="submit">Começar Conversa</button>
+        </form>
+    </div>
+
+    <div id="chat-screen" style="display: none;">
+        <header>
+            <h2 id="contact-name">Chat</h2>
+            <button id="back-button">Back</button>
+        </header>
+        <div id="chat-container"></div>
+        <form id="message-form">
+            <input type="text" id="message-input" placeholder="Digite sua mensagem..." required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>
