@@ -3,45 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
-    <link rel="stylesheet" href="style.css">
-    <script defer src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
-    <script defer src="script.js"></script>
+    <title>Chat Web</title>
+
+<head>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: rgb(162, 245, 160);
+        font-family: sans-serif; 
+        color: #eee; 
+        display: flex; /* Para centralizar o conteúdo verticalmente */
+        flex-direction: column;
+        min-height: 100vh; /* Garante que o body ocupa toda a altura da tela */
+        }
+        
+        #chat {
+        flex-grow: 1; /* Permite que o chat cresça para preencher o espaço disponível */
+        display: flex;
+        flex-direction: column;
+        max-width: 600px; 
+        margin: 20px auto; 
+        border-radius: 8px;
+        overflow: hidden; /* Evita que o conteúdo ultrapasse as bordas */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        }
+        
+        #messages {
+        flex-grow: 1; /* As mensagens ocupam o espaço principal */
+        background: #f8f7f7; /* Fundo ligeiramente mais claro para as mensagens */
+        overflow-y: auto;
+        padding: 15px;
+        box-sizing: border-box;
+        list-style: none; /* Remove os marcadores de lista padrão */
+        padding-inline-start: 0; /* Remove o padding padrão da lista */
+        }
+        
+        #messages li {
+        margin-bottom: 8px; /* Espaçamento entre as mensagens */
+        word-wrap: break-word; /* Quebra palavras longas para evitar estouro */
+        }
+        
+        #sendMsg {
+        background: rgb(211, 212, 211); 
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+        }
+        
+        #msgTxt {
+        flex-grow: 1; /* O input ocupa o espaço disponível */
+        border: none;
+        padding: 8px;
+        border-radius: 4px;
+        background: rgb(243, 243, 243); 
+        color: rgb(8, 8, 8);
+        outline: none; /* Remove a borda de foco padrão */
+        }
+        
+        #msgBtn {
+        width: auto; /* Largura automática para o botão */
+        padding: 8px 15px; /* Ajusta o padding do botão */
+        margin-left: 10px; /* Espaçamento entre o input e o botão */
+        border: none;
+        border-radius: 4px;
+        background: #48cf70; 
+        color: white;
+        cursor: pointer; /* Muda o cursor para indicar que é clicável */
+        transition: background-color 0.3s ease; /* Transição suave na cor de fundo */
+        }
+        
+        #msgBtn:hover {
+        background-color: #00b35a; 
+        }
+        
+        .outer {
+        width: 100%;
+        display: flex;
+        margin-bottom: 8px;
+        }
+        
+        .inner {
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 8px; 
+        max-width: 80%; /* Evita que as mensagens fiquem muito largas */
+        }
+        
+        .me {
+        background: #48cf70;
+        color: rgb(0, 0, 0);
+        width:250px;
+	    height:50px;
+	    border-radius: 6px;
+        margin-left: auto; /* Alinha as mensagens do usuário à direita */
+        }
+        
+        .notMe {
+        background: rgb(156, 253, 172); 
+        color: #333;
+        width:250px;
+	    height:50px;
+	    border-radius: 6px;
+        margin-right: auto;
+        }
+    </style>
 </head>
+
 <body>
-    <div id="login-screen">
-        <h1>Login</h1>
-        <form id="login-form">
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Senha" required>
-            <button type="submit">Login</button>
-        </form>
+    
+    <div id="messages"></div>
+
+    <div id="sendMsg">
+        <input type="text" id="msgTxt" placeholder="Digite sua mensagem...">
+        <input type="submit" id="msgBtn" value="Enviar" onclick="module.sendMsg()">
     </div>
 
-    <div id="conversation-list-screen" style="display: none;">
-        <header>
-            <h2>Conversas</h2>
-            <button id="logout-button">Sair</button>
-        </header>
-        <div id="conversation-list"></div>
-        <form id="new-conversation-form">
-            <input type="text" id="new-contact" placeholder="Insira o e-mail de contato..." required>
-            <button type="submit">Começar Conversa</button>
-        </form>
-    </div>
+    <script>
+        module = {};
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getDatabase, ref, set, remove, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
-    <div id="chat-screen" style="display: none;">
-        <header>
-            <h2 id="contact-name">Chat</h2>
-            <button id="back-button">Back</button>
-        </header>
-        <div id="chat-container"></div>
-        <form id="message-form">
-            <input type="text" id="message-input" placeholder="Digite sua mensagem..." required>
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAUfNiAE5S8dzF5AlXgRFq0PefdvTtYiqs",
+            authDomain: "chat-1717e.firebaseapp.com",
+            projectId: "chat-1717e",
+            storageBucket: "chat-1717e.firebasestorage.app",
+            messagingSenderId: "133447299484",
+            appId: "1:133447299484:web:acb723276481b063315859"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        //Variáveis
+        var msgTxt = document.getElementById('msgTxt');
+        var sender;
+        if(sessionStorage.getItem('sender')){
+            sender = sessionStorage.getItem('sender');
+        } else {
+            sender = prompt('Por favor, digite seu nome:');
+            sessionStorage.setItem('sender',sender);
+        }
+
+        //Enviar Mensagens
+        module.sendMsg = function sendMsg(){
+            var msg = msgTxt.value;
+            var timestamp = new Date().getTime();
+            set(ref(db,"messages/"+timestamp),{
+                msg : msg,
+                sender : sender
+            })
+
+            msgTxt.value="";
+        }
+
+        //Receber Mensagens
+        onChildAdded(ref(db,"messages"), (data)=>{
+            if(data.val().sender == sender){
+                messages.innerHTML += "<div style=justify-content:end class=outer id="+data.key+"><div id=inner class=me><b>você: "+data.val().msg+"</div></div>";
+            } else {
+                messages.innerHTML += "<div class=outer id="+data.key+"><div id=inner class=notMe><b>"+data.val().sender+" : "+data.val().msg+"</div></div>";
+            }
+        })
+
+</script>
 </body>
+
 </html>
