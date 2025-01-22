@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Web</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #mensagem {
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="login">Login:</label>
+            <input type="text" id="login" name="login" required><br><br>
+
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required><br><br>
+
+            <button type="submit">Entrar</button>
+            <div id="mensagem"></div>
+        </form>
+    </div>
+
+    <script>
+        const loginCadastado = "thalita@gmail.com";
+        const senhaCadastrada = "Thalita123";
+        let numeroDeTentativas = 3;
+        let tentativaAtual = 1;
+        const form = document.getElementById('loginForm');
+        const mensagemDiv = document.getElementById('mensagem');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const loginInformado = document.getElementById('login').value;
+            const senhaInformada = document.getElementById('senha').value;
+
+            if (loginInformado === loginCadastado && senhaInformada === senhaCadastrada) {
+                alert("Login efetuado com sucesso! Bem-vindo ao sistema.");
+                window.location.href = "index.html"; // Redireciona após o login
+            } else {
+                if (tentativaAtual === numeroDeTentativas) {
+                    mensagemDiv.textContent = "Número permitido de tentativas ultrapassado! Login bloqueado.";
+                    form.style.display = 'none'; // Oculta o formulário
+                } else {
+                    mensagemDiv.textContent = "Login ou senha inválidos. Tente novamente.";
+                }
+                tentativaAtual++;
+            }
+        });
+    </script>
+</body>
+</html>
